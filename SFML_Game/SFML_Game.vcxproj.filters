@@ -22,4 +22,7 @@
   <ItemGroup>
     <None Include="description.text" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.txt" />
+  </ItemGroup>
 </Project>
