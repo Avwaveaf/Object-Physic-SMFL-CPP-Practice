@@ -62,6 +62,7 @@ Feel free to modify the configuration file to create different scenarios for the
 
 **Note:** Ensure the SFML library is properly linked and available in your build environment. 
 all complete description available on description.txt file.
+[go to description.txt](https://github.com/Avwaveaf/Object-Physic-SMFL-CPP-Practice/blob/master/SFML_Game/description.text)
 
 ## Contributors
 
