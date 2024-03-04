@@ -1,0 +1,75 @@
+=====================================
+		PROGRAM SPECIFICATION
+=====================================
+
+Configration file must created with this format : 
+./config.txt =
+
+format setting:
+<SettingType> property property ..			(no blank new line)
+<SettingType> property property ..			(no blank new line)
+
+config file need to be in order & the example will be as following:
+
+Window *
+Font *
+[any Object Shape]
+
+Description:
+
+Window W H
+explain:
+	
+	This window line defining size of the window
+
+	W - Window Width		(int)
+	H - Window Height		(int)
+
+Font F S R G B 
+explain:
+
+	THis Font line defines the font to be used 
+
+	F - Font File			(std::string no space)
+	S - Font Size			(int)
+	RGB - RGB Color 		(int, int, int)
+
+Rectangle N X Y SX SY R G B W H
+explain:
+
+	This Object line defines the Rectangle Shape
+
+	N - Shape name			(std::string no space)
+	X - X Position			(float)
+	Y - Y Position			(float)
+	SX - Initial Speed X	(float)
+	SY - Initial Speed Y	(float)
+	R,G,B - RGB Color		(int, int, int)
+	W - Rectangle Width		(float)
+	H - Rectangle Height	(float)
+
+Circle N X Y SX SY R G B CR
+explain :
+
+	N - Shape name			(std::string no space)
+	X - X Position			(float)
+	Y - Y Position			(float)
+	SX - Initial Speed X	(float)
+	SY - Initial Speed Y	(float)
+	R,G,B - RGB color		(int, int, int)
+	CR - Circle Radius		(float)
+
+
+
+
+
+In this project we will try to create:
+
+[USING SFML LIB]
+
+1. The program must read description from configuration file
+2. drawing shape based desc to the screen. 
+3. Each shape will have a name, position, speed, color and each property unique to each shape.
+4. make the shape bounce when on the edge of the screen
+5. each shape name will be drawn on exact center of the shape .
+6. each name should given font size and color specified in config file.
