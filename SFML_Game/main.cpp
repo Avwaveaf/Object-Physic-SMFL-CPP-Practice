@@ -22,21 +22,22 @@ public:
 // derived class <Rectangle>
 class PhysicObjectRectangle :public PhysicObjectBase
 {
+    std::string m_name;
     sf::RectangleShape shape;
     sf::Vector2f position; // has X,Y
     sf::Vector2f moveSpeed; // has sX, sY
     float damping;
 
 public:
-    PhysicObjectRectangle(float posX, float posY, float sX, float sY) 
-        : position(posX, posY), moveSpeed(sX, sY), damping(0.98f)
+    PhysicObjectRectangle(std::string name,float posX, float posY, float sX, float sY) 
+        : m_name(name), position(posX, posY), moveSpeed(sX, sY), damping(0.98f)
     {
         shape.setSize(sf::Vector2f(150.0f, 150.0f));
         shape.setPosition(position);
         shape.setFillColor(sf::Color::Red);
     }
 
-    void update(sf::RenderWindow& window)
+    void update(sf::RenderWindow& window)  override
     {
         // Check collision with the x-axis boundary
         if (position.x + shape.getSize().x >= window.getSize().x || position.x <= 0)
@@ -87,26 +88,32 @@ public:
         shape.setPosition(position);
     }
 
+
+    void draw(sf::RenderWindow& window) const override
+    {
+        window.draw(shape);
+    }
 };
 
 // derived class <Circle>
 class PhysicObjectCircle :public PhysicObjectBase
 {
+    std::string m_name;
     sf::CircleShape shape;
     sf::Vector2f position; // has X,Y
     sf::Vector2f moveSpeed; // has sX, sY
     float damping;
 
 public:
-    PhysicObjectCircle(float posX, float posY,float sX, float sY,  int radius)
-        : position(posX, posY), moveSpeed(sX, sY), damping(0.98f)
+    PhysicObjectCircle(std::string name,float posX, float posY,float sX, float sY,  int radius)
+        : m_name(name), position(posX, posY), moveSpeed(sX, sY), damping(0.98f)
     {
         shape.setRadius(radius);
         shape.setPosition(position);
         shape.setFillColor(sf::Color::Red);
     }
 
-    void update(sf::RenderWindow& window)
+    void update(sf::RenderWindow& window) override
     {
         // Check collision with the x-axis boundary
         if (position.x + (shape.getRadius() * 2) >= window.getSize().x || position.x <= 0)
@@ -157,90 +164,12 @@ public:
         shape.setPosition(position);
     }
 
-};
-
-template <typename T>
-class PhysicsObject
-{
-private:
-    T shape;
-    sf::Vector2f position;
-    sf::Vector2f moveSpeed;
-    float gravitation;
-    float damping;
-
-public:
-    PhysicsObject(float posX, float posY) : position(posX, posY), moveSpeed(10.0f, 3.0f), gravitation(0.2f), damping(0.98f)
-    {
-        // define a shape for Rectangle
-        sf::Vector2f rSize(posX, posY);
-        shape.setSize(rSize);
-        shape.setPosition(position);
-        shape.setFillColor(sf::Color::Red);
-    }
-
-    PhysicsObject(int radius, float posX, float posY) : position(posX, posY), moveSpeed(10.0f, 3.0f), gravitation(0.2f), damping(0.7f)
-    {
-       // Construct a shape for Circle
-        shape.setRadius(radius);
-        shape.setPosition(position);
-        shape.setFillColor(sf::Color::Red);
-    }
-
-    void update(sf::RenderWindow& window)
-    {
-        // Check collision with the x-axis boundary
-        if (position.x + shape.getGlobalBounds().width >= window.getSize().x || position.x <= 0)
-        {
-            moveSpeed.x *= -1.0f; // Reverse the direction for x-axis
-            moveSpeed.x *= damping; // Apply damping
-
-            // Ensure the object stays within the window
-            if (position.x < 0)
-            {
-                position.x = 0;
-            }
-            else if (position.x + shape.getGlobalBounds().width > window.getSize().x)
-            {
-                position.x = window.getSize().x - shape.getGlobalBounds().width;
-            }
-        }
-
-        // Check collision with the y-axis boundary
-        else if (position.y + shape.getGlobalBounds().height >= window.getSize().y || position.y <= 0)
-        {
-            moveSpeed.y *= -1.0f; // Reverse the direction for y-axis
-            moveSpeed.y *= damping; // Apply damping
-
-            // Ensure the object stays within the window
-            if (position.y < 0)
-            {
-                position.y = 0;
-            }
-            else if (position.y + shape.getGlobalBounds().height > window.getSize().y)
-            {
-                position.y = window.getSize().y - shape.getGlobalBounds().height;
-            }
-        }
-
-        // Simulate gravitation
-        if (position.y + shape.getGlobalBounds().height < window.getSize().y)
-        {
-            moveSpeed.y += gravitation;
-        }
-
-        // Update object position
-        position.x += moveSpeed.x;
-        position.y += moveSpeed.y;
-
-        shape.setPosition(position);
-    }
-
-    void draw(sf::RenderWindow& window) const
+    void draw(sf::RenderWindow& window) const override
     {
         window.draw(shape);
     }
 };
+
 
 int main()
 {
@@ -256,6 +185,9 @@ int main()
         return -1;
     }
 
+    // Container of each shapes on config file using smart pointer for auto garbage collecting
+    std::vector<std::unique_ptr<PhysicObjectBase>> physicObjects;
+
     // define keyword
     std::string keyword;
 
@@ -264,10 +196,26 @@ int main()
         {
             fileInput >> w_width >> w_height;
         }
+        else if (keyword == "Rectangle")
+        {
+            std::string name;
+
+            float x, y, sx, sy;
+
+            fileInput >> name >> x >> y >> sx >> sy;
+
+            physicObjects.push_back(std::make_unique<PhysicObjectRectangle>(name, x, y, sx, sy));
+        }
+        else if (keyword == "Circle")
+        {
+            std::string name;
+            float radius, x, y, sx, sy;
+            fileInput >> name >> x >> y >> sx >> sy >> radius;
+            physicObjects.push_back(std::make_unique<PhysicObjectCircle>(name, x, y, sx, sy, radius));
+        }
     }
 
-    PhysicsObject<sf::RectangleShape> physicCircle(150.0f, 150.0f);
-    PhysicsObject<sf::CircleShape> myCircle(75, 100.0f, 250.0f);
+
 
 
 
@@ -291,11 +239,13 @@ int main()
         window.clear(sf::Color::Black);
 
         // Draw everything here...
-        physicCircle.draw(window);
-        physicCircle.update(window);
 
-        myCircle.draw(window);
-        myCircle.update(window);
+        // render each Shape
+        for (const auto& obj : physicObjects)
+        {
+            obj->update(window);
+            obj->draw(window);
+        }
 
         // End the current frame
         window.display();
