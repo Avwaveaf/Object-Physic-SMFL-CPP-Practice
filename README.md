@@ -1,5 +1,7 @@
 # Physics Simulation Project
 
+![](https://github.com/Avwaveaf/Object-Physic-SMFL-CPP-Practice/blob/master/sfml_physic_demo.gif)
+
 This project is a simple physics simulation implemented using SFML (Simple and Fast Multimedia Library) in C++. The goal of the project is to create a windowed environment and simulate the movement and collision of different shapes, such as rectangles and circles, based on a provided configuration file.
 
 ## Project Overview
