@@ -182,7 +182,12 @@ public:
 		shape.setPosition(position);
 
 		// Center the text within the rectangle
+
+		// defining the offset by getting the whole width of text and divide it in half for x axis
+		// and doing also for y axis
 		sf::Vector2f textOffset((shapeName.getGlobalBounds().width * 0.5f), (shapeName.getGlobalBounds().height * 0.7f));
+
+		// then setting the posiition based on shape fposition and added it with the radius then substrating it with the offset
 		shapeName.setPosition((shape.getPosition().x + shape.getRadius()) - textOffset.x, (shape.getPosition().y + shape.getRadius())-textOffset.y);
 
 	}
