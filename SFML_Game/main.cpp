@@ -96,7 +96,8 @@ public:
 		// re draw the name each update
 		// Center the text within the rectangle
 		sf::Vector2f textCenter = shape.getPosition() + 0.5f * shape.getSize();
-		shapeName.setPosition(textCenter - sf::Vector2f(0.5f * shapeName.getGlobalBounds().width, 0.5f * shapeName.getGlobalBounds().height));
+		shapeName.setPosition(textCenter - sf::Vector2f(0.5f * shapeName.getGlobalBounds().width, 0.7f * shapeName.getGlobalBounds().height));
+
 	}
 
 
@@ -110,6 +111,7 @@ public:
 // derived class <Circle>
 class PhysicObjectCircle :public PhysicObjectBase
 {
+	sf::Text shapeName;
 	std::string m_name;
 	sf::CircleShape shape;
 	sf::Vector2f position; // has X,Y
@@ -117,12 +119,16 @@ class PhysicObjectCircle :public PhysicObjectBase
 	float damping;
 
 public:
-	PhysicObjectCircle(std::string name, float posX, float posY, float sX, float sY, int r, int g, int b, float radius)
+	PhysicObjectCircle(std::string name, float posX, float posY, float sX, float sY, int r, int g, int b, float radius, sf::Font& font)
 		: m_name(name), position(posX, posY), moveSpeed(sX, sY), damping(0.98f)
 	{
 		shape.setRadius(radius);
 		shape.setPosition(position);
 		shape.setFillColor(sf::Color(r, g, b));
+
+		shapeName.setFont(font);
+		shapeName.setString(m_name);
+		shapeName.setPosition(shape.getPosition() + sf::Vector2f(shape.getRadius(), shape.getRadius()));
 	}
 
 	void update(sf::RenderWindow& window) override
@@ -174,11 +180,18 @@ public:
 		position.y += moveSpeed.y;
 
 		shape.setPosition(position);
+
+		// Center the text within the rectangle
+		sf::Vector2f textOffset((shapeName.getGlobalBounds().width * 0.5f), (shapeName.getGlobalBounds().height * 0.7f));
+		shapeName.setPosition((shape.getPosition().x + shape.getRadius()) - textOffset.x, (shape.getPosition().y + shape.getRadius())-textOffset.y);
+
 	}
 
 	void draw(sf::RenderWindow& window) const override
 	{
 		window.draw(shape);
+		// draw name to the screen
+		window.draw(shapeName);
 	}
 };
 
@@ -237,7 +250,7 @@ int main()
 			int r, g, b;
 			float radius, x, y, sx, sy;
 			fileInput >> name >> x >> y >> sx >> sy >> r >> g >> b >> radius;
-			physicObjects.push_back(std::make_unique<PhysicObjectCircle>(name, x, y, sx, sy, r, g, b, radius));
+			physicObjects.push_back(std::make_unique<PhysicObjectCircle>(name, x, y, sx, sy, r, g, b, radius, font));
 		}
 	}
 
